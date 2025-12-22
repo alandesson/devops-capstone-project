@@ -21,6 +21,7 @@ DATABASE_URI = os.getenv(
 BASE_URL = "/accounts"
 HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 
+
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
@@ -124,7 +125,7 @@ class TestAccountService(TestCase):
             content_type="test/html"
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-    
+
     # READ ACCOUNTS
 
     def test_read_an_account(self):
@@ -132,12 +133,12 @@ class TestAccountService(TestCase):
         account = self._create_accounts(1)[0]
 
         responseRead = self.client.get(
-            f'{BASE_URL}/{account.id}', 
+            f'{BASE_URL}/{account.id}',
             content_type="application/json"
         )
 
         self.assertEqual(responseRead.status_code, status.HTTP_200_OK)
-        
+
         # Check the data is correct
         returned_account = responseRead.get_json()
         self.assertEqual(returned_account["name"], account.name)
@@ -145,7 +146,7 @@ class TestAccountService(TestCase):
         self.assertEqual(returned_account["address"], account.address)
         self.assertEqual(returned_account["phone_number"], account.phone_number)
         self.assertEqual(returned_account["date_joined"], str(account.date_joined))
-    
+
     def test_get_account_not_found(self):
         """It should not Read an Account that is not found"""
         resp = self.client.get(f"{BASE_URL}/0")
@@ -167,14 +168,14 @@ class TestAccountService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         updated_account = resp.get_json()
         self.assertEqual(updated_account["name"], "Something Known")
-    
+
     def test_update_account_not_found(self):
         """It should not Update an Account that is not found"""
         test_account = AccountFactory()
 
         resp = self.client.put(f"{BASE_URL}/0", json=test_account.serialize())
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     # DELETE ACCOUNT
 
     def test_delete_account(self):
@@ -182,7 +183,7 @@ class TestAccountService(TestCase):
         account = self._create_accounts(1)[0]
         resp = self.client.delete(f"{BASE_URL}/{account.id}")
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-    
+
     def test_get_account_list(self):
         """It should Get a list of Accounts"""
         self._create_accounts(5)
